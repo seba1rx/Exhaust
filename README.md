@@ -27,7 +27,7 @@ The `Commands::apiResponse()` method sends a plain JSON object not intended for 
 ## Installation
 
 ```bash
-composer require sebastian/exhaust
+composer require seba1rx/exhaust
 ```
 
 ---
@@ -51,7 +51,7 @@ your-app/
 └── resources/templates/        ← views
 ```
 
-The package (`sebastian/exhaust`) provides the `Exhaust\` namespace. Your application code lives in the `App\` namespace. Controllers, middlewares and models are app concerns — the package does not define a controller base class.
+The package (`seba1rx/exhaust`) provides the `Exhaust\` namespace. Your application code lives in the `App\` namespace. Controllers, middlewares and models are app concerns — the package does not define a controller base class.
 
 ---
 
