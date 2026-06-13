@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exhaust - PHP Framework</title>
+
+    <!-- Meta -->
+    <meta name="description" content="Marketplace for Admin Dashboard Templates" />
+    <meta name="author" content="BootstrapGet" />
+    <link rel="canonical" href="https://www.bootstrapget.com/">
+    <meta property="og:url" content="https://www.bootstrapget.com/">
+    <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrapget">
+    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta property="og:type" content="Website">
+    <meta property="og:site_name" content="BootstrapGet">
+    <link rel="shortcut icon" href="assets/tpl/images/favicon.svg" />
+
+    <!-- ************ CSS Files ************* -->
+    <!-- Icomoon Font Icons css -->
+    <link rel="stylesheet" href="assets/tpl/fonts/icomoon/style.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/tpl/css/main.min.css" />
+
+    <!--set global vars in js -->
+		{% if DEBUG_FRONTEND %}
+			<script>
+				DEBUG_FRONTEND = {{ DEBUG_FRONTEND ? 1 : 0 }}
+			</script>
+		{% endif %}
+
+    <!--initial js -->
+    <script src="assets/js/jquery_3.7.1.js"></script>
+    <script src="assets/js/jq_extensions.js"></script>
+    <script src="assets/js/engine.js"></script>
+
+  </head>
+
+  <body class="login-bg">
+    <div class="container">
+      <div class="auth-wrapper">
+        <form id="login_form">
+          <div class="auth-box">
+            <a href="index.html" class="auth-logo mb-4">
+              <img src="assets/img/engine_brand.png" alt="Exhaust Logo">
+            </a>
+
+            <h4 class="mb-4">Login</h4>
+
+            <div class="mb-3">
+              <label class="form-label" for="email">Your email <span class="text-danger">*</span></label>
+              <input type="text" id="userEmail" name="userEmail" class="form-control" placeholder="Enter your email">
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label" for="pwd">Your password <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Enter password">
+                <button class="btn btn-outline-secondary" type="button">
+                  <i class="icon-eye-off"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mb-3">
+              <a href="forgot-password.html" class="text-decoration-underline">Forgot Password?</a>
+            </div>
+
+            <div class="mb-3 d-grid gap-2">
+              <button type="button" class="btn btn-primary" onclick="attemptLogin()">Login</button>
+              <a href="signup.html" class="btn btn-outline-dark">Not Registered? Signup</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+        function attemptLogin() {
+          let formData = Exhaust.form.getData('login_form');
+          Exhaust.request.post({url:'/login', payload: formData, showLoading:true});
+        }
+    </script>
+
+    <script src="assets/libraries/sweetalert2_v_11.14.5/sweetalert2.all.min.js"></script>
+
+  </body>
+</html>

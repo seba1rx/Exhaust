@@ -1,0 +1,9 @@
+# Exclude development files from Composer dist export
+
+tests/                  export-ignore
+CLAUDE.md               export-ignore
+phpunit.xml             export-ignore
+.phpunit.result.cache   export-ignore
+.phpunit.cache/         export-ignore
+.gitattributes          export-ignore
+coverage/               export-ignore

@@ -1,0 +1,140 @@
+# Exhaust
+
+> Minimalist SPA-oriented PHP framework. The primary interaction model is a typed **commands pattern**: PHP controllers queue typed commands (html injection, dialogs, toasts, scripts) that the frontend engine `engeen.js` interprets and executes client-side.
+
+PHP >= 8.4 · Namespace `Exhaust\` · PSR-4 from `src/` · Composer package `sebastian/exhaust`
+
+---
+
+## Core concepts
+
+**SPA mode** — the primary path:
+Controllers accumulate commands via static methods on `Commands`, then return `Commands::all()`. The JSON is consumed by `engeen.js` in the browser.
+
+**API mode** — plain JSON, no engeen.js:
+`Commands::apiResponse(['key' => $val])` sends a plain object. Cannot be combined with other commands.
+
+**`app()`** — global singleton accessor returning `Exhaust\App`:
+- `app()->conf` — stdClass config (from consumer's `config/config.php`)
+- `app()->request` — `Exhaust\Request\Request` instance
+- `app()->payload` — alias of `app()->request->payload`
+- `app()->dbLink` — DatabaseHandler
+- `app()->templateEngine` — active TemplateBlueprint facade
+- `app()->render('template.twig', ['k' => $v])` — render shortcut
+
+**`Commands`** is a **static** class — not instantiated, accumulates state within a request cycle. Always reset between test cases.
+
+---
+
+## Contracts (Exhaust\Contracts\)
+
+| Interface | Implemented by | Notes |
+|---|---|---|
+| `UrlBlueprint` | `Request` | URI parsing methods |
+| `RequestBlueprint` | `Request` | extends `UrlBlueprint` |
+| `ResponseBlueprint` | consumer class | not in this package — `Commands` is static |
+| `MiddlewareBlueprint` | consumer middlewares | extends PSR-15 `MiddlewareInterface` |
+| `TemplateBlueprint` | `TwigFacade`, `PistonFacade`, `SmartyFacade`, `BladeFacade`, `PlatesFacade` | all facades implement this |
+| `MailerBlueprint` | (none active) | `MailerWrapper` intentionally does not implement it — API divergence |
+| `PdfBlueprint` | (none active) | reserved |
+
+### Why `Commands` does not implement `ResponseBlueprint`
+`Commands` uses static methods and properties. `ResponseBlueprint` defines instance methods. They are architecturally incompatible. `ResponseBlueprint` is the contract for a consumer-side instantiable wrapper class.
+
+### Why `MailerWrapper` does not implement `MailerBlueprint`
+Property names, method names, and parameter signatures diverge completely. Do not add `implements MailerBlueprint` until both APIs are aligned.
+
+### Middleware dispatch — dual pattern
+Middlewares can be PSR-15 (`MiddlewareBlueprint`) or legacy invokables (`__invoke()`). The consumer's `Controller` base must detect which:
+
+```php
+if ($middleware instanceof MiddlewareBlueprint) {
+    $psr7 = app()->request->toPsr7($factory);
+    $response = $middleware->process($psr7, $handler);
+} else {
+    ($middleware)();
+}
+```
+
+---
+
+## PHP 8.4 interface rules
+
+```php
+// Methods must always be public — protected is a fatal error in interfaces
+interface MiBlueprint {
+    public function method(): string;   // ✅
+    protected function method(): string; // ❌ fatal
+}
+
+// Properties only with { get; } or { get; set; } — no default values
+interface MiBlueprint {
+    public string $name { get; }         // ✅
+    public string $name = 'default';     // ❌ invalid
+}
+```
+
+---
+
+## RequestType enum
+
+```php
+RequestType::Navigation  // browser navigation
+RequestType::XHR         // XMLHttpRequest
+RequestType::Fetch        // fetch() with X-Requested-With: fetch header
+
+app()->request->isAsync();       // true for XHR or Fetch
+app()->request->isNavigation();  // true for Navigation
+```
+
+---
+
+## PSR integration
+
+| PSR | Package | Usage |
+|---|---|---|
+| PSR-3  | `psr/log` | `Logger` |
+| PSR-7  | `psr/http-message` | adapter via `Request::toPsr7($factory)` — not a native implementation |
+| PSR-15 | `psr/http-server-middleware` | `MiddlewareBlueprint extends MiddlewareInterface` |
+| PSR-17 | `psr/http-factory` | parameter of `toPsr7(ServerRequestFactoryInterface $factory)` |
+
+`Request` is **mutable by design** — PSR-7 `withX()` immutability would break the existing flow. Interoperability is via the `toPsr7()` adapter.
+
+---
+
+## Known gotchas
+
+- **`castToDetectedType()` and boolean strings**: `"FALSE"` casts to `true` in PHP (`(bool)"FALSE" === true`). Known bug, not corrected.
+- **`Request::setShouldBeIgnored()` requires App initialized**: calls `app()->conf->request->ignore`. Will fail if `App` is not yet initialized — mock or avoid in unit tests.
+- **`Piston::$globals` must be `array`**: declared as `private array $globals = []`. Do not change to untyped — causes warning in `foreach` if `addGlobal()` was never called.
+- **`Commands` accumulates state between tests**: static properties survive test boundaries. Call `Commands::reset()` or equivalent at the start of each test that touches `Commands`.
+- **`Router` hard-depends on consumer class**: does `use App\Controllers\NotFound` and instantiates it for 404s. `App\Controllers\NotFound` must exist in the consuming app — this package does not provide it.
+
+---
+
+## Source layout
+
+```
+src/
+├── App.php                       ← singleton (accessed via app())
+├── bootstrap.php                 ← framework entry point, loaded by consumer
+├── globalScopeFunctions.php      ← global helper: clog()
+├── Handler.php                   ← static request/response lifecycle handler
+├── Contracts/                    ← interfaces
+├── Controllers/Manager.php       ← internal controller for framework docs landing
+├── DB/                           ← DatabaseHandler + Pool (PDO + Eloquent)
+├── Exceptions/
+│   ├── LogicException.php
+│   └── handler.php               ← global Throwable handler function
+├── Facades/Templating/           ← per-engine wrappers (Twig, Piston, Smarty, Blade, Plates)
+├── Logging/                      ← Logger (PSR-3), CliLog, EngineLogger, QueryLogger, TxtLog
+├── Mailer/MailerWrapper.php      ← PHPMailer wrapper
+├── Patterns/Singleton.php        ← Singleton trait used by App
+├── Request/                      ← Request.php + RequestType.php enum
+├── Response/Commands.php         ← static commands accumulator
+├── Routing/                      ← Router.php + Route.php
+├── Session/                      ← ExhaustSessionAdmin wrapper
+├── TemplateEngine/Piston.php     ← built-in PHP-native template engine
+├── Tools/                        ← CastingTool, StringTool, MinifyTool, etc.
+└── Websocket/                    ← WebSocket integration (Thruway)
+```

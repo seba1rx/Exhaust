@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exhaust</title>
+
+    <!-- Meta -->
+    <meta name="description" content="Exhaust demo framework" />
+    <meta property="og:title" content="Exhaust Framwork">
+    <meta property="og:description" content="PHP framework with minimal dependencies">
+    <meta property="og:type" content="Website">
+    <meta property="og:site_name" content="ExhaustFramework">
+    <link rel="shortcut icon" href="assets/img/favicon.ico" />
+
+    <!-- ************ CSS Files ************ -->
+    <!-- Icomoon Font Icons css -->
+    <link rel="stylesheet" href="assets/tpl/fonts/icomoon/style.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/app.css" />
+    <link rel="stylesheet" href="assets/tpl/css/main.min.css" />
+
+    <!-- ************ Vendor Css Files ************* -->
+
+    <!-- Scrollbar CSS -->
+    <link rel="stylesheet" href="assets/tpl/vendor/overlay-scroll/OverlayScrollbars.min.css" />
+
+    <!-- set global vars in js -->
+		{% if DEBUG_FRONTEND %}
+			<script>
+				DEBUG_FRONTEND = {{ DEBUG_FRONTEND ? 1 : 0 }}
+			</script>
+		{% endif %}
+
+    <!-- initial js -->
+    <script src="assets/js/jquery_3.7.1.js"></script>
+    <script src="assets/js/jq_extensions.js"></script>
+    <script src="assets/js/engine.js"></script>
+
+  </head>
+
+  <body>
+    <div class="page-wrapper">
+      <div class="main-container">
+        <nav id="sidebar" class="sidebar-wrapper">
+          <div class="app-brand px-3 py-2 d-flex align-items-center">
+            <a href="/start">
+              <img src="assets/img/engine_brand.png" class="logo" alt="Exhaust" />
+            </a>
+          </div>
+
+          <div class="sidebarMenuScroll">
+            <ul class="sidebar-menu">
+              <li class="active current-page">
+                <a href="/start">
+                  <i class="icon-padding"></i>
+                  <span class="menu-text">Starter Page</span>
+                </a>
+              </li>
+              <li class="treeview">
+                <a href="#!">
+                  <i class="icon-notes"></i>
+                  <span class="menu-text">Multi Level</span>
+                </a>
+                <ul class="treeview-menu">
+                  <li>
+                    <a href="#!">Level One Link</a>
+                  </li>
+                  <li>
+                    <a href="#!">
+                      Level One Menu
+                      <i class="icon-arrow_forward_ios"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                      <li>
+                        <a href="#!">Level Two Link</a>
+                      </li>
+                      <li>
+                        <a href="#!">Level Two Menu
+                          <i class="icon-arrow_forward_ios"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                          <li>
+                            <a href="#!">Level Three Link</a>
+                          </li>
+                          <li>
+                            <a href="#!">Level Three Link</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#!">Level One Link</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+        </nav>
+
+        <div class="app-container">
+
+          <div class="app-header d-flex align-items-center">
+
+            <div class="d-flex">
+              <button type="button" class="btn btn-primary toggle-sidebar" id="toggle-sidebar">
+                <i class="icon-menu"></i>
+              </button>
+              <button type="button" class="btn btn-primary pin-sidebar" id="pin-sidebar">
+                <i class="icon-menu"></i>
+              </button>
+            </div>
+
+            <div class="app-brand-sm d-md-none d-sm-block">
+              <a href="/start">
+                <!-- assets/tpl/images/logo-sm.svg -->
+                <img src="assets/img/favicon.ico" class="logo" alt="Exhaust Framework">
+              </a>
+            </div>
+
+            <div class="search-container d-xl-block d-none mx-3">
+              <input type="text" class="form-control" id="search" placeholder="Search" />
+              <i class="icon-search"></i>
+            </div>
+
+            <div class="header-actions">
+              <div class="d-md-flex d-none gap-2">
+                <div class="dropdown">
+                  <a class="dropdown-toggle position-relative action-icon" href="#!" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="icon-twitch fs-5 lh-1"></i>
+                    <span class="count rounded-circle bg-danger">5</span>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end dropdown-menu-md shadow-sm">
+                    <h5 class="fw-semibold px-3 py-2 m-0">Notifications</h5>
+                    <a href="javascript:void(0)" class="dropdown-item">
+                      <div class="d-flex align-items-start py-2">
+                        <img src="assets/tpl/images/user.png" class="img-3x me-3 rounded-3" alt="Admin Themes" />
+                        <div class="m-0">
+                          <h6 class="mb-1 fw-semibold">Zaaida el-Abdul</h6>
+                          <p class="mb-1">
+                            Membership has been ended.
+                          </p>
+                          <p class="small m-0 opacity-50">
+                            Today, 07:30pm
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a href="javascript:void(0)" class="dropdown-item">
+                      <div class="d-flex align-items-start py-2">
+                        <img src="assets/tpl/images/user2.png" class="img-3x me-3 rounded-3" alt="Admin Theme" />
+                        <div class="m-0">
+                          <h6 class="mb-1 fw-semibold">Saara al-Faris</h6>
+                          <p class="mb-1">
+                            Congratulate, James for new job.
+                          </p>
+                          <p class="small m-0 opacity-50">
+                            Today, 08:00pm
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a href="javascript:void(0)" class="dropdown-item">
+                      <div class="d-flex align-items-start py-2">
+                        <img src="assets/tpl/images/user1.png" class="img-3x me-3 rounded-3" alt="Admin Theme" />
+                        <div class="m-0">
+                          <h6 class="mb-1 fw-semibold">Razeena al-Sahli</h6>
+                          <p class="mb-1">
+                            Zaahira added new schedule release.
+                          </p>
+                          <p class="small m-0 opacity-50">
+                            Today, 09:30pm
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <div class="d-grid p-3 border-top">
+                      <a href="javascript:void(0)" class="btn btn-outline-primary">View all</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="dropdown ms-3">
+                <a class="dropdown-toggle d-flex align-items-center" href="#!" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <div class="icons-box md bg-primary rounded-circle m-2 fw-semibold">US</div>
+                  <div class="d-md-flex d-none flex-column">
+                    <span>Usman Saeed</span>
+                    <small>Admin</small>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end shadow-sm">
+                  <div class="d-grid gap-2 p-3">
+                    <div class="header-action-links d-flex gap-2">
+                      <a class="action-link" onclick="Exhaust.request.get({url:'/profile', debug: true})"><i class="icon-person_outline"></i>Profile</a>
+                      <a class="action-link" href="/profile_settings"><i class="icon-settings"></i>Settings</a>
+                    </div>
+                    <div class="d-grid">
+                      <a onclick="Exhaust.request.get({url:'/logout'})"class="btn btn-primary">Logout</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-body">
+
+            <div id="content_section" class="container-fluid">
+
+              <div class="row">
+                <div class="col-xl-12 col-12">
+                  <h2 class="mb-2">Starter Page</h2>
+                  <h6 class="mb-4 fw-light">
+                    Quickly and easily get started with Bootstrap's compiled,
+                    production-ready starter page.
+                  </h6>
+                </div>
+              </div>
+
+              <pre>
+                {{ app|json_encode(constant('JSON_PRETTY_PRINT')) }}
+              </pre>
+
+            </div>
+
+          </div>
+
+          <div class="app-footer">
+            <span>© Bootstrapget 2025</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ************ JavaScript Files ************* -->
+    <script src="assets/tpl/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ************ Vendor Js Files ************* -->
+
+    <!-- Overlay Scroll JS -->
+    <script src="assets/tpl/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
+    <script src="assets/tpl/vendor/overlay-scroll/custom-scrollbar.js"></script>
+
+    <!-- Custom JS files -->
+    <script src="assets/tpl/js/custom.js"></script>
+
+    <!-- lib JS files -->
+    <script src="assets/libraries/sweetalert2_v_11.14.5/sweetalert2.all.min.js"></script>
+
+  </body>
+
+
+</html>
