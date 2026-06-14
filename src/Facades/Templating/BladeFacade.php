@@ -3,25 +3,24 @@
 namespace Exhaust\Facades\Templating;
 
 use Exhaust\Contracts\TemplateBlueprint;
-use Jenssegers\Blade\Blade;
+use Illuminate\View\Factory;
 
 /**
- * Facade that wraps Jenssegers\Blade — a standalone Laravel Blade port.
+ * Facade that wraps illuminate/view's Blade engine.
  *
  * Template names follow Blade's dot-notation convention (e.g. 'landing.index').
  * Blade auto-escapes output with {{ }}, so escapeContent() is a no-op.
- * Requires jenssegers/blade v3+.
  */
 class BladeFacade implements TemplateBlueprint
 {
     /**
-     * The Blade instance.
-     * @var Blade
+     * The illuminate/view Factory instance.
+     * @var Factory
      */
-    private Blade $blade;
+    private Factory $blade;
 
     /**
-     * Loads the Blade instance from the config file.
+     * Loads the Factory instance from the config file.
      */
     public function __construct()
     {
@@ -37,7 +36,7 @@ class BladeFacade implements TemplateBlueprint
      */
     public function render(string $name, array $context = []): string
     {
-        return $this->blade->render($name, $context);
+        return $this->blade->make($name, $context)->render();
     }
 
     /**
