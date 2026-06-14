@@ -28,7 +28,7 @@
         "nelexa/zip": "^4.0",
         "mnapoli/silly": "^1.0",
         "phpmailer/phpmailer": "^6.0",
-        "seba1rx/sessionadmin": "dev-main",
+        "seba1rx/sessionadmin": "^3.0",
         "twig/twig": "^3.0",
         "scotteh/php-dom-wrapper": "^3.0",
         "smarty/smarty": "^5.5",
