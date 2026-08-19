@@ -31,9 +31,14 @@
 		{% endif %}
 
     <!--initial js -->
-    <script src="assets/js/jquery_3.7.1.js"></script>
-    <script src="assets/js/jq_extensions.js"></script>
-    <script src="assets/js/engine.js"></script>
+    <!-- 1. dialog library -->
+    <script src="assets/libraries/sweetalert2_v_11.14.5/sweetalert2.all.min.js"></script>
+    <!-- 2. engeen core -->
+    <script src="assets/js/engeen.js"></script>
+    <!-- 3. driver -->
+    <script src="assets/js/drivers/engeen-swal2-driver.js"></script>
+    <!-- 4. register driver -->
+    <script>Engeen.setDialogDriver(EngeenSwal2Driver);</script>
 
   </head>
 
@@ -78,12 +83,10 @@
 
     <script>
         function attemptLogin() {
-          let formData = Exhaust.form.getData('login_form');
-          Exhaust.request.post({url:'/login', payload: formData, showLoading:true});
+          let formData = Engeen.form.getData('login_form');
+          Engeen.request.post({url:'/login', payload: formData, showLoading:true});
         }
     </script>
-
-    <script src="assets/libraries/sweetalert2_v_11.14.5/sweetalert2.all.min.js"></script>
 
   </body>
 </html>

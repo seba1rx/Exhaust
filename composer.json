@@ -40,10 +40,5 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^12.1"
-    },
-    "extra": {
-        "exhaust": {
-            "stubs": "stubs/"
-        }
     }
 }

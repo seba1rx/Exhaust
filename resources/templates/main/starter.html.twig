@@ -35,9 +35,14 @@
 		{% endif %}
 
     <!-- initial js -->
-    <script src="assets/js/jquery_3.7.1.js"></script>
-    <script src="assets/js/jq_extensions.js"></script>
-    <script src="assets/js/engine.js"></script>
+    <!-- 1. dialog library -->
+    <script src="assets/libraries/sweetalert2_v_11.14.5/sweetalert2.all.min.js"></script>
+    <!-- 2. engeen core -->
+    <script src="assets/js/engeen.js"></script>
+    <!-- 3. driver -->
+    <script src="assets/js/drivers/engeen-swal2-driver.js"></script>
+    <!-- 4. register driver -->
+    <script>Engeen.setDialogDriver(EngeenSwal2Driver);</script>
 
   </head>
 
@@ -197,11 +202,11 @@
                 <div class="dropdown-menu dropdown-menu-end shadow-sm">
                   <div class="d-grid gap-2 p-3">
                     <div class="header-action-links d-flex gap-2">
-                      <a class="action-link" onclick="Exhaust.request.get({url:'/profile', debug: true})"><i class="icon-person_outline"></i>Profile</a>
+                      <a class="action-link" onclick="Engeen.request.get({url:'/profile', debug: true})"><i class="icon-person_outline"></i>Profile</a>
                       <a class="action-link" href="/profile_settings"><i class="icon-settings"></i>Settings</a>
                     </div>
                     <div class="d-grid">
-                      <a onclick="Exhaust.request.get({url:'/logout'})"class="btn btn-primary">Logout</a>
+                      <a onclick="Engeen.request.get({url:'/logout'})"class="btn btn-primary">Logout</a>
                     </div>
                   </div>
                 </div>
@@ -252,9 +257,6 @@
 
     <!-- Custom JS files -->
     <script src="assets/tpl/js/custom.js"></script>
-
-    <!-- lib JS files -->
-    <script src="assets/libraries/sweetalert2_v_11.14.5/sweetalert2.all.min.js"></script>
 
   </body>
 

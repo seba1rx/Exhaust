@@ -9,9 +9,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * Etapa 1: archivos raíz (sin directorio)
  *
- * Archivos: globalScopeFunctions.php, App.php, Handler.php
+ * Archivos: globalScopeFunctions.php, App.php
  *
- * - App y Handler dependen del bootstrap completo (config, DB, rutas, sesión).
+ * - App depende del bootstrap completo (config, DB, rutas, sesión).
  *   Sus tests de integración requieren ese entorno y se omiten aquí.
  *
  * - globalScopeFunctions.php define clog() — función global probada aquí.

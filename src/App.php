@@ -262,6 +262,12 @@ final class App extends Singleton
     {
         if(!$this->request->shouldBeIgnored){
 
+            ## validates remote address is allowed
+            $this->validateRemoteAddress();
+
+            ## if app uses jwt token then tries to validate it
+            $this->validateJwtToken();
+
             $commands = [];
             if($this->request->isAsync()){
 
@@ -331,6 +337,77 @@ final class App extends Singleton
 
         header('Content-Type: application/json; charset=utf-8');
         return json_encode($this->validatedCommands);
+    }
+
+    /**
+     * Validates if the remote request address is in the allowed remotes (see config.php access section)
+     *
+     * @throws \Exception
+     * @return void
+     */
+    private function validateRemoteAddress(): void
+    {
+        if($this->conf->access->validate_remote_request_address){
+            $remoteIp = $this->request->getRemoteAddress();
+            if(!in_array($remoteIp, (array)$this->conf->access->allowed_remote_request_addresses)){
+                throw new \Exception('El origen de su solicitud no tiene permitido el acceso a la app ('. $remoteIp .')');
+            }
+        }
+    }
+
+    /**
+     * If app uses jwt token then tries to validate it, storing the resolved token in conf->jwt->token
+     *
+     * @return void
+     */
+    private function validateJwtToken(): void
+    {
+        if($this->conf->jwt->uses_token){
+            $this->conf->jwt->token = $this->getBearerToken();
+        }
+    }
+
+    /**
+     * Get access token from the Authorization header in the request
+     * (null if bearer authorization header not found)
+     * https://stackoverflow.com/questions/40582161/how-to-properly-use-bearer-tokens
+     *
+     * @return string|null
+     */
+    private function getBearerToken(): string|null
+    {
+        $headers = $this->getAuthorizationHeader();
+        if (!empty($headers)) {
+            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+                return $matches[1];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the Authorization header from the request, checking common server variables
+     * and falling back to apache_request_headers() when available.
+     * https://stackoverflow.com/questions/40582161/how-to-properly-use-bearer-tokens
+     *
+     * @return string|null
+     */
+    private function getAuthorizationHeader(): string|null
+    {
+        $headers = null;
+        if (isset($_SERVER['Authorization'])) {
+            $headers = trim($_SERVER["Authorization"]);
+        } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
+            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+        } elseif (function_exists('apache_request_headers')) {
+            $requestHeaders = apache_request_headers();
+            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
+            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+            if (isset($requestHeaders['Authorization'])) {
+                $headers = trim($requestHeaders['Authorization']);
+            }
+        }
+        return $headers;
     }
 
     /**

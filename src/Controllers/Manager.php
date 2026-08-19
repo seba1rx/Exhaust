@@ -1,23 +1,31 @@
 <?php
 
-namespace Exhaust;
+declare(strict_types=1);
 
-use Exhaust\Controllers;
+namespace Exhaust\Controllers;
 
+use Exhaust\Response\Commands;
+
+/**
+ * Internal controller used to display the framework's own documentation landing page.
+ * This is not a base class for the consuming app's controllers.
+ */
 class Manager
 {
+    /**
+     * Renders the framework documentation page and returns it as an "echo" command
+     *
+     * @return array
+     */
     public function showDocumentation(): array
     {
         $html_content = app()->render(
-            'landing_page/documentation.html.twig',
+            'landing/documentation.html.twig',
             ['DEBUG_FRONTEND' => DEBUG_FRONTEND]
         );
 
-        return [
-            "response_type" => "html",
-            "html" => $html_content,
-        ];
+        Commands::echo($html_content);
+
+        return Commands::all();
     }
-
-
 }

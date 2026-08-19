@@ -30,6 +30,14 @@ The `Commands::apiResponse()` method sends a plain JSON object not intended for 
 composer require seba1rx/exhaust
 ```
 
+The package does not publish any files automatically — copy the base configuration from
+`vendor/seba1rx/exhaust/stubs/config/` into your app's `config/` directory and adjust it to
+your needs:
+
+```bash
+cp -r vendor/seba1rx/exhaust/stubs/config/. config/
+```
+
 ---
 
 ## Project structure

@@ -23,6 +23,8 @@ final class Router
         $this->routes['POST'] = $routes['POST'];
         $this->routes['PUT'] = $routes['PUT'];
         $this->routes['DELETE'] = $routes['DELETE'];
+
+        $this->checkForAmbiguousRoutes();
     }
 
     public function getRoutes(): array
@@ -165,6 +167,55 @@ final class Router
         }
 
         return false;
+    }
+
+    /**
+     * Checks that no two configured routes with the same method and segment count are
+     * ambiguous, i.e. indistinguishable from each other by their literal (non-param)
+     * segments. Without this, identifyRoute() would silently resolve the ambiguity by
+     * returning whichever route comes first in PHP's array iteration order.
+     *
+     * @throws \Exception
+     * @return void
+     */
+    private function checkForAmbiguousRoutes(): void
+    {
+        foreach($this->routes as $method => $routesForMethod){
+            $routeNames = array_keys($routesForMethod);
+
+            foreach($routeNames as $i => $routeNameA){
+                $segmentsA = $this->getRouteSegments(
+                    uri_route: StringTool::getStringAfterFirst(needle: "/", haystack: $routesForMethod[$routeNameA]['path'])
+                );
+
+                for($j = $i + 1; $j < count($routeNames); $j++){
+                    $routeNameB = $routeNames[$j];
+                    $segmentsB = $this->getRouteSegments(
+                        uri_route: StringTool::getStringAfterFirst(needle: "/", haystack: $routesForMethod[$routeNameB]['path'])
+                    );
+
+                    if(count($segmentsA) !== count($segmentsB)) continue;
+
+                    ## routes are distinguishable if there is at least one position where both
+                    ## have a literal (non-param) segment and those literals differ
+                    $distinguishable = false;
+                    foreach($segmentsA as $index => $segmentA){
+                        $segmentB = $segmentsB[$index];
+                        $isParamA = StringTool::isWrappedBetween(haystack: $segmentA, firstChar: '{', finalChar: '}');
+                        $isParamB = StringTool::isWrappedBetween(haystack: $segmentB, firstChar: '{', finalChar: '}');
+
+                        if(!$isParamA && !$isParamB && $segmentA !== $segmentB){
+                            $distinguishable = true;
+                            break;
+                        }
+                    }
+
+                    if(!$distinguishable){
+                        throw new \Exception("Las rutas '{$routeNameA}' y '{$routeNameB}' (metodo {$method}) son ambiguas: tienen la misma cantidad de segmentos y no se pueden distinguir por ningun segmento literal");
+                    }
+                }
+            }
+        }
     }
 
     /**
