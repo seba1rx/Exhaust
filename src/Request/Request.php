@@ -226,12 +226,25 @@ class Request implements RequestBlueprint
     }
 
     /**
-     * Casts the value to the identified type (int, double, bool, string)
+     * Casts the value to the identified type (int, double, bool, string).
+     *
+     * Arrays are walked recursively so nested JSON structures (e.g. a list of
+     * line items) keep their shape, with only their scalar leaves cast.
+     * Objects are returned untouched.
      *
      * @param mixed $value
+     * @return mixed the cast scalar, the recursively cast array, or the original object
      */
     private function castToDetectedType(mixed $value): mixed
     {
+        if (is_array($value)) {
+            return array_map(fn (mixed $item): mixed => $this->castToDetectedType($item), $value);
+        }
+
+        if (is_object($value)) {
+            return $value;
+        }
+
         $str_bools = ["TRUE", "FALSE"];
 
         if (is_numeric($value)) {
